@@ -1,10 +1,13 @@
 package com.ricardo.weatherapp.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -13,11 +16,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ricardo.weatherapp.R;
-import com.ricardo.weatherapp.model.LocationSearch;
-import com.ricardo.weatherapp.model.Weather;
+import com.ricardo.weatherapp.util.Constants;
 import com.ricardo.weatherapp.viewmodel.WeatherViewModel;
+import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,6 +31,11 @@ public class MainActivity extends AppCompatActivity {
     private ImageView weatherImage;
     private Button searchButton;
     private ProgressBar loadingBar;
+
+    String currentCoords;
+    LocationManager locationManager;
+    String provider;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void configObservables() {
+        getCurrentCoords();
+        weatherViewModel.getLocationByCoords(currentCoords, getApplicationContext());
+
         weatherViewModel.getLocationSearched().observe(this, locationSearch -> {
             locationName.setText(locationSearch.getLocationName());
         });
@@ -52,8 +64,17 @@ public class MainActivity extends AppCompatActivity {
                     formatTemperature(currentWeather.getMinTemp())));
 
             hideLoading();
-            // weatherImage
+            Picasso.get().load(getWeatherImage(currentWeather.getStateAbbreviation())).into(weatherImage);
         });
+
+        weatherViewModel.getErrorMessage().observe(this, errorMessage -> {
+            Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_LONG).show();
+            hideLoading();
+        });
+    }
+
+    private String getWeatherImage(String stateAbbreviation) {
+        return Constants.IMAGE_URL + stateAbbreviation + Constants.IMAGE_EXT_PNG;
     }
 
     private void configViews() {
@@ -66,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
         weatherImage = findViewById(R.id.weather_image);
         searchButton = findViewById(R.id.search_button);
         loadingBar = findViewById(R.id.loading_bar);
-
 
         searchButton.setOnClickListener(v -> {
             if (!searchBar.getText().toString().equals("")) {
@@ -108,5 +128,19 @@ public class MainActivity extends AppCompatActivity {
 
     private String formatTemperature(String temperature) {
         return String.valueOf(Math.round(Double.parseDouble(temperature)));
+    }
+
+    private void getCurrentCoords() {
+
+    }
+
+    public void statusCheck() {
+        final LocationManager manager = (LocationManager) getSystemService(
+                Context.LOCATION_SERVICE);
+
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            System.out.println("no GPS");
+
+        }
     }
 }

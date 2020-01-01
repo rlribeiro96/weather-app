@@ -6,6 +6,7 @@ import android.widget.Toast;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.ricardo.weatherapp.R;
 import com.ricardo.weatherapp.model.ConsolidatedWeather;
 import com.ricardo.weatherapp.model.LocationSearch;
 import com.ricardo.weatherapp.model.Weather;
@@ -24,11 +25,12 @@ public class WeatherViewModel extends ViewModel {
     private API api;
     private MutableLiveData<Weather> currentWeather;
     private MutableLiveData<LocationSearch> locationSearched;
-    private MutableLiveData<LocationSearch> errorMessage;
+    private MutableLiveData<String> errorMessage;
 
     public WeatherViewModel() {
         currentWeather = new MutableLiveData<>();
         locationSearched = new MutableLiveData<>();
+        errorMessage = new MutableLiveData<>();
     }
 
     public MutableLiveData<Weather> getCurrentWeatherValue() {
@@ -39,6 +41,9 @@ public class WeatherViewModel extends ViewModel {
         return locationSearched;
     }
 
+    public MutableLiveData<String> getErrorMessage() {
+        return errorMessage;
+    }
 
     public void getLocationIdByQuery(String locationName, Context context) {
         api = ServiceBuilder.getService().create(API.class);
@@ -48,23 +53,49 @@ public class WeatherViewModel extends ViewModel {
         locationSearchDataCall.enqueue(new Callback<ArrayList<LocationSearch>>() {
             @Override
             public void onResponse(Call<ArrayList<LocationSearch>> call, Response<ArrayList<LocationSearch>> response) {
-                if(!response.body().isEmpty()) {
+                if (!response.body().isEmpty()) {
                     locationSearched.setValue(response.body().get(0));
-                    loadCurrentWeather(response.body().get(0).getLocationId());
+                    loadCurrentWeather(response.body().get(0).getLocationId(), context);
                 } else {
-
+                    errorMessage.setValue(context.getString(R.string.location_not_found_error));
                 }
             }
 
             @Override
             public void onFailure(Call<ArrayList<LocationSearch>> call, Throwable t) {
                 System.out.println("getLocationIdByQuery onFailure: " + t.getLocalizedMessage());
-
+                errorMessage.setValue(context.getString(R.string.general_error_message));
             }
         });
     }
 
-    private void loadCurrentWeather(String locationId) {
+    public void getLocationByCoords(String lattlong, Context context) {
+        api = ServiceBuilder.getService().create(API.class);
+
+        Call<ArrayList<LocationSearch>> locationSearchDataCall = api.getLocationIdByQuery(lattlong);
+
+        locationSearchDataCall.enqueue(new Callback<ArrayList<LocationSearch>>() {
+            @Override
+            public void onResponse(Call<ArrayList<LocationSearch>> call, Response<ArrayList<LocationSearch>> response) {
+                if (response.body() != null) {
+                    if (!response.body().isEmpty()) {
+                        locationSearched.setValue(response.body().get(0));
+                        loadCurrentWeather(response.body().get(0).getLocationId(), context);
+                    }
+                } else {
+                    errorMessage.setValue(context.getString(R.string.location_not_found_error));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<LocationSearch>> call, Throwable t) {
+                System.out.println("getLocationIdByQuery onFailure: " + t.getLocalizedMessage());
+                errorMessage.setValue(context.getString(R.string.current_location_not_found_error));
+            }
+        });
+    }
+
+    private void loadCurrentWeather(String locationId, Context context) {
         api = ServiceBuilder.getService().create(API.class);
 
         Call<ConsolidatedWeather> consolidateWeatherDataCall = api.getConsolidateWeatherByLocation(locationId);
@@ -73,13 +104,15 @@ public class WeatherViewModel extends ViewModel {
             @Override
             public void onResponse(Call<ConsolidatedWeather> call, Response<ConsolidatedWeather> response) {
                 if (response.body() != null) {
-                    currentWeather.setValue(response.body().getWeathers().get(0));
+                    Weather weather = response.body().getWeathers().get(0);
+                    currentWeather.setValue(weather);
                 }
             }
 
             @Override
             public void onFailure(Call<ConsolidatedWeather> call, Throwable t) {
-                System.out.println("@@@@ loadCurrentWeather onSucess: " + t.getLocalizedMessage());
+                System.out.println("loadCurrentWeather onFailure: " + t.getLocalizedMessage());
+                errorMessage.setValue(context.getString(R.string.general_error_message));
             }
         });
     }

@@ -2,5 +2,9 @@
     <string name="app_name">WeatherApp</string>
     <string name="high_and_low_temperatures">H: %s °  L: %s °</string>
     <string name="general_error_message">Oops... something went wrong. Please try again later."</string>
+    <string name="location_not_found_error">Location not found."</string>
+    <string name="current_location_not_found_error">Current location not found."</string>
+
+
 
 </resources>
