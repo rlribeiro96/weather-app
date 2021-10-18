@@ -1,12 +1,14 @@
 package com.ricardo.weatherapp.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
@@ -23,6 +25,8 @@ import com.ricardo.weatherapp.util.Constants;
 import com.ricardo.weatherapp.viewmodel.WeatherViewModel;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     private WeatherViewModel weatherViewModel;
@@ -33,19 +37,24 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar loadingBar;
 
     String currentCoords;
-    LocationManager locationManager;
-    String provider;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE}, 1);
+
         weatherViewModel = new ViewModelProvider(this).get(WeatherViewModel.class);
 
         configViews();
         configObservables();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getCurrentCoords();
     }
 
     private void configObservables() {
@@ -131,16 +140,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getCurrentCoords() {
-
+        System.out.println("@@@@ currentCoords: " + currentCoords);
     }
 
-    public void statusCheck() {
-        final LocationManager manager = (LocationManager) getSystemService(
-                Context.LOCATION_SERVICE);
+    private Location getLastKnownLocation() {
+        LocationManager mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        List<String> providers = mLocationManager.getProviders(true);
+        Location bestLocation = null;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
 
-        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            System.out.println("no GPS");
-
+            for (String provider : providers) {
+                Location l = mLocationManager.getLastKnownLocation(provider);
+                if (l == null) {
+                    continue;
+                }
+                if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                    // Found best last known location: %s", l);
+                    bestLocation = l;
+                }
+            }
         }
+        return bestLocation;
     }
 }
