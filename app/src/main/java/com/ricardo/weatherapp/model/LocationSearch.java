@@ -8,21 +8,13 @@ public class LocationSearch {
     private String locationName;
 
     @SerializedName("woeid")
-    private String locationId;
+    private String locationId = "";
 
     public String getLocationName() {
         return locationName;
     }
 
-    public void setLocationName(String locationName) {
-        this.locationName = locationName;
-    }
-
     public String getLocationId() {
         return locationId;
-    }
-
-    public void setLocationId(String locationId) {
-        this.locationId = locationId;
     }
 }

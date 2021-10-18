@@ -26,47 +26,27 @@ public class Weather {
         return weatherId;
     }
 
-    public void setWeatherId(String weatherId) {
-        this.weatherId = weatherId;
-    }
-
     public String getStateName() {
         return stateName;
     }
 
-    public void setStateName(String stateName) {
-        this.stateName = stateName;
-    }
 
     public String getStateAbbreviation() {
         return stateAbbreviation;
     }
 
-    public void setStateAbbreviation(String stateAbbreviation) {
-        this.stateAbbreviation = stateAbbreviation;
-    }
 
     public String getMinTemp() {
         return minTemp;
-    }
-
-    public void setMinTemp(String minTemp) {
-        this.minTemp = minTemp;
     }
 
     public String getMaxTemp() {
         return maxTemp;
     }
 
-    public void setMaxTemp(String maxTemp) {
-        this.maxTemp = maxTemp;
-    }
 
     public String getCurrentTemp() {
         return currentTemp;
     }
 
-    public void setCurrentTemp(String currentTemp) {
-        this.currentTemp = currentTemp;
-    }
 }

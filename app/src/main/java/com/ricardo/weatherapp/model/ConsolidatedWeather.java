@@ -16,15 +16,7 @@ public class ConsolidatedWeather {
         return weathers;
     }
 
-    public void setWeathers(List<Weather> weathers) {
-        this.weathers = weathers;
-    }
-
     public String getCity() {
         return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
     }
 }
