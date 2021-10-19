@@ -6,10 +6,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -51,15 +47,9 @@ public class MainActivity extends AppCompatActivity {
         configObservables();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getCurrentCoords();
-    }
-
     private void configObservables() {
-        getCurrentCoords();
-        weatherViewModel.getLocationByCoords(currentCoords, getApplicationContext());
+        //to get first access location
+        //weatherViewModel.getLocationByCoords(currentCoords, getApplicationContext());
 
         weatherViewModel.getLocationSearched().observe(this, locationSearch -> {
             locationName.setText(locationSearch.getLocationName());
@@ -99,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
         searchButton.setOnClickListener(v -> {
             if (!searchBar.getText().toString().equals("")) {
-                weatherViewModel.getLocationIdByQuery(searchBar.getText().toString(), getApplicationContext());
+                weatherViewModel.callLocationIdByQuery(searchBar.getText().toString(), getApplicationContext());
                 showLoading();
 
                 InputMethodManager imm = (InputMethodManager) getSystemService(
@@ -139,29 +129,5 @@ public class MainActivity extends AppCompatActivity {
         return String.valueOf(Math.round(Double.parseDouble(temperature)));
     }
 
-    private void getCurrentCoords() {
-        System.out.println("@@@@ currentCoords: " + currentCoords);
-    }
 
-    private Location getLastKnownLocation() {
-        LocationManager mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        List<String> providers = mLocationManager.getProviders(true);
-        Location bestLocation = null;
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
-
-            for (String provider : providers) {
-                Location l = mLocationManager.getLastKnownLocation(provider);
-                if (l == null) {
-                    continue;
-                }
-                if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
-                    // Found best last known location: %s", l);
-                    bestLocation = l;
-                }
-            }
-        }
-        return bestLocation;
-    }
 }
