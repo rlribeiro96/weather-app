@@ -21,8 +21,6 @@ import com.ricardo.weatherapp.util.Constants;
 import com.ricardo.weatherapp.viewmodel.WeatherViewModel;
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
 
     private WeatherViewModel weatherViewModel;
@@ -55,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
             locationName.setText(locationSearch.getLocationName());
         });
 
-        weatherViewModel.getCurrentWeatherValue().observe(this, currentWeather -> {
+        weatherViewModel.getCurrentWeather().observe(this, currentWeather -> {
             currentTemperature.setText(formatTemperature((currentWeather.getCurrentTemp())));
             weatherDescription.setText(currentWeather.getStateName());
             highAndLowTemp.setText(getString(R.string.high_and_low_temperatures,

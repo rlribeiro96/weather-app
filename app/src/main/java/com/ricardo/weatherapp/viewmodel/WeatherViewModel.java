@@ -12,7 +12,7 @@ import com.ricardo.weatherapp.service.WeatherRepository;
 
 public class WeatherViewModel extends ViewModel {
 
-    private WeatherRepository repository;
+    public WeatherRepository repository;
     private MutableLiveData<Weather> currentWeather;
     private MutableLiveData<LocationSearch> locationSearched;
     private MutableLiveData<String> errorMessage;
@@ -26,17 +26,14 @@ public class WeatherViewModel extends ViewModel {
     }
 
     public MutableLiveData<LocationSearch> getLocationSearched() {
-        //locationSearched = repository.getLocationSearchedResult();
         return locationSearched;
     }
 
     public MutableLiveData<String> getErrorMessage() {
-        //errorMessage = repository.getErrorMessageResult();
         return errorMessage;
     }
 
-    public MutableLiveData<Weather> getCurrentWeatherValue() {
-        //currentWeather = repository.getCurrentWeatherResult();
+    public MutableLiveData<Weather> getCurrentWeather() {
         return currentWeather;
     }
 
