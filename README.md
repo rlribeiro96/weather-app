@@ -11,7 +11,7 @@ The app also utilizes Picasso, a well-known Android third party library to easil
 
 To run the project you have to open it using Android Studio and either build in a virtual device or a physical Android device. 
 
-WeatherApp still needs some better improvements like: 
+WeatherApp still needs some improvements: 
 - First access shows the current location weather (almost got it done, discarted at the last moment)
 - More solid MVVM architecture implementation
 - Error handling more efficiently 
