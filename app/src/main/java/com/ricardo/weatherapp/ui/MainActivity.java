@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private Button searchButton;
     private ProgressBar loadingBar;
 
-    String currentCoords;
+    private String currentCoords;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +48,10 @@ public class MainActivity extends AppCompatActivity {
     private void configObservables() {
         //to get first access location
         //weatherViewModel.getLocationByCoords(currentCoords, getApplicationContext());
+
+        //Temporary method while getting the user
+        //location at first access is not done
+        firstAccessSearch();
 
         weatherViewModel.getLocationSearched().observe(this, locationSearch -> {
             locationName.setText(locationSearch.getLocationName());
@@ -90,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
                 weatherViewModel.callLocationIdByQuery(searchBar.getText().toString(), getApplicationContext());
                 showLoading();
 
+                //This block hides the keyboard after submiting the location
                 InputMethodManager imm = (InputMethodManager) getSystemService(
                         Activity.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
@@ -127,5 +132,9 @@ public class MainActivity extends AppCompatActivity {
         return String.valueOf(Math.round(Double.parseDouble(temperature)));
     }
 
+    private void firstAccessSearch(){
+        weatherViewModel.callLocationIdByQuery("São Paulo", getApplicationContext());
+        showLoading();
+    }
 
 }
