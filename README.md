@@ -2,7 +2,7 @@
 
 WeatherApp is a simple application that shows the current weather based on the provided location. 
 
-All the API calls are facilitaded by using the Retrofit library. The applications consults endpoints provided by:
+All the API calls are facilitaded by using the Retrofit library. The applications consults endpoints provided by
 https://www.metaweather.com/
 
 The app also utilizes Picasso, a well-known Android third party library to easily display images into ImageViews providing its URL.
