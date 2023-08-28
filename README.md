@@ -1,6 +1,6 @@
 # WeatherApp ⛈
 
-WeatherApp is a simple application that shows the current weather based on the provided location. 
+WeatherApp is a simple Android application that shows the current weather based on the provided location. 
 
 All the API calls are made by using the Retrofit library. 
 The applications consults endpoints provided by https://www.metaweather.com/
