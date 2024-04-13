@@ -1,4 +1,4 @@
-# WeatherApp ⛈
+# weather-app ⛈
 
 WeatherApp is a simple Android application that shows the current weather based on the provided location. 
 
